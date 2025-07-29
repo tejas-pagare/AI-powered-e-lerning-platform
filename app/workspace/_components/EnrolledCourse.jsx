@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import EnrolledCourseCard from "./EnrolledCourseCard";
 
 function EnrolledCourse() {
-  const [enrolledCourses, setEnrolledCourses] = useState([]);
+  const [enrolledCourses, setEnrolledCourses] = useState(null);
   const { user, isLoaded } = useUser();
   const fetchEnrolledCourses = async () => {
     try {
@@ -21,7 +21,9 @@ function EnrolledCourse() {
       fetchEnrolledCourses();
     }
   }, [isLoaded, user]); // Now this only fires once when the user is ready
-
+  if(!enrolledCourses){
+    return <h1>Loading Enrolled Courses </h1>
+  }
   return (
     <div className="p-4">
       <h1 className="text-primary font-bold py-4 text-3xl ">

@@ -14,7 +14,7 @@ export async function POST(req) {
       const enroll = await db.insert(enrollCourses).values({
         cid: courseId,
         userEmail: user?.primaryEmailAddress?.emailAddress,
-        completedChapters: {}
+        completedChapters:[]
       });
       return NextResponse.json({ message: "Course Enrolled Successfully", enroll })
     }

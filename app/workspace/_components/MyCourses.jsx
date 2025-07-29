@@ -24,9 +24,13 @@ function MyCourses() {
   useEffect(() => {
     user && fetchCourses();
   }, [user]);
+  
   return (
     <div className="p-4">
       <h1 className="text-2xl lg:text-3xl font-bold">Course List</h1>
+      {
+        !courses&& <h1>Loading Courses...</h1>
+      }
       {courses.length === 0 && (
         <div className="my-4 border rounded-2xl p-4 bg-secondary">
           <div className="flex flex-col gap-4 items-center justify-center">

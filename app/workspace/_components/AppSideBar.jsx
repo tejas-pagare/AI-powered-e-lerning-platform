@@ -62,7 +62,7 @@ export function AppSidebar() {
   
   return (
     <Sidebar>
-      <SidebarHeader>
+      <SidebarHeader asChild>
         <Image
           src={"/logo.svg"}
           alt="EasyTax"
@@ -73,7 +73,7 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <NewCourse>
+          <NewCourse >
             <Button className={'text-sm w-full'}>Create new Course</Button>
           </NewCourse>
           
