@@ -11,7 +11,7 @@ import { ChapterSideBar } from "../_components/ChapterSideBar";
 import Header from "../_components/Header";
 
 
-const Page =  () => {
+const Page = () => {
   const { id } = useParams();
   const [enrolledCourse, setEnrolledCourse] = useState(null);
   const fetchCourseById = async () => {
@@ -23,20 +23,20 @@ const Page =  () => {
     fetchCourseById();
   }, []);
   return (
-     <SidebarProvider>
-      
+    <SidebarProvider>
+
       {enrolledCourse && (
         <>
           <ChapterSideBar enrolledCourse={enrolledCourse} />
           <div className="w-full">
-            
-            <Header />
-            <ChapterContent CourseId={id} enrolledCourse={enrolledCourse} refreshData ={()=>fetchCourseById()} />
+
+            <Header enrolledCourse={enrolledCourse} />
+            <ChapterContent CourseId={id} enrolledCourse={enrolledCourse} refreshData={() => fetchCourseById()} />
           </div>
         </>
       )}
     </SidebarProvider>
-   
+
   );
 };
 

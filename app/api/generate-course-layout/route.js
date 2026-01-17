@@ -4,9 +4,12 @@ import {
 
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { courseTable } from '@/lib/schema';
+import { courseTable, usersTable } from '@/lib/schema';
 import { currentUser } from '@clerk/nextjs/server';
 import { generateImage } from '@/lib/ImageGeneration';
+import { ensureUserExists } from '@/lib/ensureUser';
+import { getAIConfigForTier, getGenerationConfig } from '@/lib/ai-config';
+import { eq } from 'drizzle-orm';
 const PROMPT = `Generate Learning Course depends on following
 details. In which Make sure to add Course Name,
 Description,Course Banner Image Prompt (Create a
@@ -47,19 +50,23 @@ Schema:
 `
 export async function POST(req) {
   const formData = await req.json();
-  const user = await currentUser()
+  const user = await currentUser();
+
+  // Fetch user's subscription tier from database
+  const email = user?.primaryEmailAddress?.emailAddress;
+  const [dbUser] = await db.select().from(usersTable).where(eq(usersTable.email, email));
+  const userTier = dbUser?.tier || 'Free';
+
+  // Get AI configuration based on user's tier
+  const aiConfig = getAIConfigForTier(userTier);
+  const generationConfig = getGenerationConfig(userTier);
+
   const ai = new GoogleGenAI({
     apiKey: process.env.GEMINI_API_KEY,
   });
 
-
-
-  const config = {
-
-    responseMimeType: 'text/plain',
-  };
-
-  const model = 'gemini-2.5-pro';
+  const config = generationConfig;
+  const model = aiConfig.model;
   const contents = [
     {
       role: 'user',
@@ -73,22 +80,24 @@ export async function POST(req) {
     config,
     contents,
   });
-  
+
   const RawResponse = response.candidates[0].content.parts[0].text;
-  const RawJson = RawResponse.replace('```json','').replace('```','');
+  const RawJson = RawResponse.replace('```json', '').replace('```', '');
   const JSONResponse = JSON.parse(RawJson);
   // genearting banner for course
   const courseBannerUrl = await generateImage(JSONResponse.bannerImagePrompt);
-  
+
+  // Ensure user exists in database before creating course
+  await ensureUserExists(user);
 
   // storing course in database
   await db.insert(courseTable).values({
     ...formData,
-    courseJson:JSONResponse,
-    cid:formData?.courseId,
-    userEmail:user?.primaryEmailAddress?.emailAddress,
+    courseJson: JSONResponse,
+    cid: formData?.courseId,
+    userEmail: user?.primaryEmailAddress?.emailAddress,
     courseBannerUrl
   })
 
-  return NextResponse.json({courseId:formData?.courseId});
+  return NextResponse.json({ courseId: formData?.courseId });
 }

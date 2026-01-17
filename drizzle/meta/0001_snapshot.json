@@ -1,0 +1,278 @@
+{
+  "id": "158bbaeb-3421-42b6-8595-5d4546e8cf40",
+  "prevId": "7c95955c-6089-46d5-8498-e8838855eb40",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.course": {
+      "name": "course",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "course_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "cid": {
+          "name": "cid",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "chapters": {
+          "name": "chapters",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "includeVideo": {
+          "name": "includeVideo",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "level": {
+          "name": "level",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "category": {
+          "name": "category",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userEmail": {
+          "name": "userEmail",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "courseJson": {
+          "name": "courseJson",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "courseBannerUrl": {
+          "name": "courseBannerUrl",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'https://t3.ftcdn.net/jpg/04/01/36/86/360_F_401368641_nEdHMBlrlmyW09cBtm4lvb83EtN7Gx5t.jpg'"
+        },
+        "courseContent": {
+          "name": "courseContent",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::json"
+        },
+        "quiz": {
+          "name": "quiz",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'{}'::json"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "course_userEmail_users_email_fk": {
+          "name": "course_userEmail_users_email_fk",
+          "tableFrom": "course",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userEmail"
+          ],
+          "columnsTo": [
+            "email"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "course_cid_unique": {
+          "name": "course_cid_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "cid"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.enrollCourses": {
+      "name": "enrollCourses",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "enrollCourses_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "cid": {
+          "name": "cid",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userEmail": {
+          "name": "userEmail",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "completedChapters": {
+          "name": "completedChapters",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'[]'::json"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "enrollCourses_cid_course_cid_fk": {
+          "name": "enrollCourses_cid_course_cid_fk",
+          "tableFrom": "enrollCourses",
+          "tableTo": "course",
+          "columnsFrom": [
+            "cid"
+          ],
+          "columnsTo": [
+            "cid"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "enrollCourses_userEmail_users_email_fk": {
+          "name": "enrollCourses_userEmail_users_email_fk",
+          "tableFrom": "enrollCourses",
+          "tableTo": "users",
+          "columnsFrom": [
+            "userEmail"
+          ],
+          "columnsTo": [
+            "email"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "users_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subscriptionId": {
+          "name": "subscriptionId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

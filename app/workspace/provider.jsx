@@ -4,21 +4,21 @@ import React from 'react'
 import { AppSidebar } from './_components/AppSideBar'
 import AppHeader from './_components/AppHeader'
 
-function WorkspaceProvider({children}) {
+function WorkspaceProvider({ children, userCredits, userTier }) {
   return (
     <div>
       <SidebarProvider>
-        <AppSidebar/>
+        <AppSidebar />
         <div className='w-full '>
-          <AppHeader/>
+          <AppHeader userCredits={userCredits} userTier={userTier} />
           <div className='p-6'>
-              {children}
+            {children}
           </div>
-        
+
         </div>
-        
+
       </SidebarProvider>
-    
+
     </div>
   )
 }

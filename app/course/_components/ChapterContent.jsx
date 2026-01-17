@@ -6,9 +6,11 @@ import { CircleCheckBig, Loader2, X } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
 import YouTube from "react-youtube";
 import { toast } from "sonner";
+import QuizSection from "./QuizSection";
+import ChatBot from "./ChatBot";
 
-function ChapterContent({ enrolledCourse, CourseId,refreshData }) {
-  const [isMarking,setIsMarking] = useState(false);
+function ChapterContent({ enrolledCourse, CourseId, refreshData }) {
+  const [isMarking, setIsMarking] = useState(false);
   const { selectedChapter } = useContext(SelectedChapter);
   const completedChapters = enrolledCourse.enrollCourses.completedChapters
   const selectedChapterDetails =
@@ -36,7 +38,7 @@ function ChapterContent({ enrolledCourse, CourseId,refreshData }) {
     } catch (error) {
       console.log(error);
       toast.error("Enternal Server Error")
-    }finally{
+    } finally {
       setIsMarking(false)
     }
   };
@@ -46,7 +48,7 @@ function ChapterContent({ enrolledCourse, CourseId,refreshData }) {
       const updatedCompleted = completedChapters.filter(
         (e) => e !== selectedChapter
       );
-     setIsMarking(true)
+      setIsMarking(true)
       await axios.put(`/api/course/${CourseId}`, {
         completedChapters: updatedCompleted,
       });
@@ -55,7 +57,7 @@ function ChapterContent({ enrolledCourse, CourseId,refreshData }) {
     } catch (error) {
       console.log(error);
       toast.error("Enternal Server Error")
-    }finally{
+    } finally {
       setIsMarking(false)
     }
   };
@@ -65,17 +67,17 @@ function ChapterContent({ enrolledCourse, CourseId,refreshData }) {
       <h1 className="w-full flex justify-end px-2 mb-6">
         {!completedChapters?.includes(selectedChapter) ? (
           <Button disabled={isMarking} onClick={MarkAsCompleted} className="cursor-pointer">
-           { isMarking ? <Loader2 className="animate-spin" />: <CircleCheckBig className="mr-2" />}
+            {isMarking ? <Loader2 className="animate-spin" /> : <CircleCheckBig className="mr-2" />}
             Mark As Completed
           </Button>
         ) : (
           <Button
-          disabled={isMarking}
+            disabled={isMarking}
             onClick={MarkAsUnCompleted}
             variant="secondary"
             className="cursor-pointer"
           >
-          { isMarking ? <Loader2 className="animate-spin" />:   <X className="mr-2" />}
+            {isMarking ? <Loader2 className="animate-spin" /> : <X className="mr-2" />}
             Mark As UnCompleted
           </Button>
         )}
@@ -108,6 +110,24 @@ function ChapterContent({ enrolledCourse, CourseId,refreshData }) {
           </div>
         ))}
       </div>
+
+      {/* Quiz Section */}
+      {enrolledCourse?.course?.quiz && (
+        <QuizSection
+          quizData={enrolledCourse.course.quiz[selectedChapterDetails?.courseData?.chapterName]}
+          chapterName={selectedChapterDetails?.courseData?.chapterName}
+          onComplete={(score, total) => {
+            console.log(`Quiz completed: ${score}/${total}`);
+            toast.success(`Quiz completed! Score: ${score}/${total}`);
+          }}
+        />
+      )}
+
+      {/* AI Tutor ChatBot */}
+      <ChatBot
+        chapterContent={selectedChapterDetails?.courseData}
+        chapterName={selectedChapterDetails?.courseData?.chapterName}
+      />
     </div>
   );
 }

@@ -22,9 +22,13 @@ function Provider({ children }) {
       console.log(error);
     }
   };
+  const refreshUserDetails = async () => {
+    if (user) await createUser();
+  };
+
   return (
     <div>
-      <userContextProvider.Provider value={{ userDetails, setUserDetails }}>
+      <userContextProvider.Provider value={{ userDetails, setUserDetails, refreshUserDetails }}>
         <SelectedChapter.Provider
           value={{ selectedChapter, setSelectedChapter }}
         >
