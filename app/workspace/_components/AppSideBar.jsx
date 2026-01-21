@@ -62,7 +62,7 @@ export function AppSidebar() {
   
   return (
     <Sidebar>
-      <SidebarHeader asChild>
+      <SidebarHeader>
         <Image
           src={"/logo.svg"}
           alt="EasyTax"

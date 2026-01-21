@@ -5,9 +5,10 @@ import { SUBSCRIPTION_PLANS, CREDITS_PER_COURSE } from "@/config/subscriptions";
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import { Check, X, Loader2, Sparkles, CreditCard, Zap, ShieldCheck } from "lucide-react";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { toast } from "sonner";
 import { userContextProvider } from "@/context/userContext";
+import { useSearchParams } from "next/navigation";
 
 const PLAN_FEATURES = {
   Free: [
@@ -44,8 +45,24 @@ const PLAN_ICONS = {
 
 export default function BillingPage() {
   const { user } = useUser();
-  const { userDetails } = useContext(userContextProvider);
+  const { userDetails, refreshUserDetails } = useContext(userContextProvider);
   const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    // Refresh user details when page loads or when coming back from checkout
+    if (user) {
+      refreshUserDetails();
+    }
+    
+    // Show success message if redirected from successful checkout
+    if (searchParams.get('success') === 'true') {
+      toast.success("Payment Successful!", {
+        description: "Your subscription has been updated!",
+        icon: <Sparkles className="h-5 w-5 text-yellow-500" />,
+      });
+    }
+  }, [user, searchParams]);
 
   const onPayment = async (plan) => {
     setLoading(true);
@@ -76,6 +93,14 @@ export default function BillingPage() {
           <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
             Upgrade to unlock more courses, premium features, and priority assistance.
           </p>
+          {userDetails && (
+            <div className="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-blue-50 border border-blue-200 rounded-full">
+              <span className="text-sm font-semibold text-blue-700">Current Plan:</span>
+              <span className="text-sm font-bold text-blue-900">{userDetails.tier}</span>
+              <span className="text-sm text-blue-600">•</span>
+              <span className="text-sm font-semibold text-blue-700">{userDetails.credits} Credits</span>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

@@ -31,7 +31,7 @@ export function ChapterSideBar({ enrolledCourse }) {
     enrolledCourse?.enrollCourses?.completedChapters || [];
   const { setSelectedChapter } = useContext(SelectedChapter);
   return (
-    <Sidebar className={"p-2"}>
+    <Sidebar className={"p-2"} >
       <SidebarHeader className={"text-2xl py-6 font-bold text-primary"}>
         <Image
           src={"/logo.svg"}
