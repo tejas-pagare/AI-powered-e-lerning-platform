@@ -13,14 +13,34 @@ export async function POST(req) {
         { status: 400 }
       );
     }
-    // if user exists
-    const user = await db.select().from(usersTable).where(eq(usersTable.email, email));
+    // if user exists - explicitly select only existing columns
+    const user = await db.select({
+      id: usersTable.id,
+      name: usersTable.name,
+      email: usersTable.email,
+      tier: usersTable.tier,
+      credits: usersTable.credits,
+      stripeCustomerId: usersTable.stripeCustomerId,
+      stripeSubscriptionId: usersTable.stripeSubscriptionId,
+      stripePriceId: usersTable.stripePriceId,
+      stripeCurrentPeriodEnd: usersTable.stripeCurrentPeriodEnd,
+    }).from(usersTable).where(eq(usersTable.email, email));
 
     if (user?.length === 0) {
       const result = await db.insert(usersTable).values({
         name,
         email
-      }).returning(usersTable);
+      }).returning({
+        id: usersTable.id,
+        name: usersTable.name,
+        email: usersTable.email,
+        tier: usersTable.tier,
+        credits: usersTable.credits,
+        stripeCustomerId: usersTable.stripeCustomerId,
+        stripeSubscriptionId: usersTable.stripeSubscriptionId,
+        stripePriceId: usersTable.stripePriceId,
+        stripeCurrentPeriodEnd: usersTable.stripeCurrentPeriodEnd,
+      });
 
       return NextResponse.json(result[0]);
     }
